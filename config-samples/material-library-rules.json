@@ -1,0 +1,10 @@
+{
+  "materialForms": {
+    "property": "AllowedFor",
+    "solid": "Solid",
+    "sheetMetal": "SheetMetal"
+  },
+  "sheetMetalLibraries": [
+    "Sheet Metal Materials"
+  ]
+}

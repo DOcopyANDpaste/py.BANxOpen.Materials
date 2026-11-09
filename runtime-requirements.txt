@@ -1,0 +1,2 @@
+# Third-party packages Materials needs at NX runtime (installed into the shared site-packages).
+# None: Materials uses the standard library only (json, xml.etree).
