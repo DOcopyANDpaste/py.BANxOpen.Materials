@@ -6,6 +6,7 @@ import logging
 from collections.abc import Iterable, Mapping, Sequence, Set
 
 from banxopen.foundation import BodyId, BodyInfo, OperationResult
+from banxopen.materials.codes import MaterialsCodes
 from banxopen.materials.core.assignment.part_materials import PartChangeOutcome, PartMaterialService
 from banxopen.materials.core.assignment.planning import MaterialAssignmentPlanningInput
 from banxopen.materials.core.assignment.verdicts import PlannedAssignment, verdicts_for
@@ -200,6 +201,28 @@ class MaterialAssignmentService:
             else:
                 outcomes.append(BodyOutcome(body.id, body.name, OutcomeStatus.APPLIED))
         return _with_report(result, AssignmentReport(tuple(outcomes)))
+
+    # ---- Preferred material ----
+
+    def preferred_material(self) -> str | None:
+        """A fresh read of the part's preferred material (`MaterialPartAttributes.PREFERRED_MATERIAL`)."""
+        name = self._part.get_preferred_material()
+        return (name.strip() or None) if name is not None else None
+
+    def set_preferred_material(self, name: str) -> OperationResult[None]:
+        """Writes the part's preferred material. Any material name is accepted, whether or not a body carries it: that
+        policy is the tool's. Writing the value the part already holds (case-insensitively) changes nothing."""
+        wanted = name.strip()
+        if not wanted:
+            return OperationResult.fail(MaterialsCodes.PREFERRED_MATERIAL_BLANK, self._text.preferred_material_blank)
+        current = self.preferred_material()
+        if current is not None and current.casefold() == wanted.casefold():
+            _log.debug("Preferred material is already '%s'; not rewritten.", current)
+            return OperationResult.success()
+        result = self._part.set_preferred_material(wanted)
+        if result.ok:
+            _log.info("Preferred material set to '%s' (was '%s').", wanted, current or "unset")
+        return result
 
     # ---- Helpers ----
 

@@ -32,3 +32,7 @@ class MaterialsCodes:
     """A side-effect executor was handed an instruction type it does not carry out. Shared by every executor."""
     MALFORMED_INSTRUCTION: Final = "MALFORMED_INSTRUCTION"
     """A side-effect instruction is missing a value its executor needs."""
+    PREFERRED_MATERIAL_BLANK: Final = "PREFERRED_MATERIAL_BLANK"
+    """The preferred material to write has no name."""
+    PREFERRED_MATERIAL_WRITE_FAILED: Final = "PREFERRED_MATERIAL_WRITE_FAILED"
+    """NX refused to write the part's preferred-material attribute; the part keeps its previous value."""

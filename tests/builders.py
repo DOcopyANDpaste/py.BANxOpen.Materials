@@ -158,6 +158,11 @@ class FakePartMaterialService:
     applied_plans: list[ExecutablePlan] = field(default_factory=list)
     cleared: list[list[BodyId]] = field(default_factory=list)
     resolution_libraries: list[MaterialLibrary] = field(default_factory=list)
+    preferred: str | None = None
+    """The part's preferred-material attribute value."""
+    preferred_writes: list[str] = field(default_factory=list)
+    fail_preferred_write: str | None = None
+    """When set, `set_preferred_material` fails with this message."""
 
     def get_bodies(self) -> Sequence[BodyInfo]:
         return list(self.bodies)
@@ -175,6 +180,16 @@ class FakePartMaterialService:
     def clear_material(self, body_ids: Sequence[BodyId]) -> OperationResult[PartChangeOutcome]:
         self.cleared.append(list(body_ids))
         return self._outcome(body_ids)
+
+    def get_preferred_material(self) -> str | None:
+        return self.preferred
+
+    def set_preferred_material(self, name: str) -> OperationResult[None]:
+        if self.fail_preferred_write is not None:
+            return OperationResult.fail("PREFERRED_MATERIAL_WRITE_FAILED", self.fail_preferred_write)
+        self.preferred_writes.append(name)
+        self.preferred = name
+        return OperationResult.success()
 
     def _outcome(self, body_ids: Sequence[BodyId]) -> OperationResult[PartChangeOutcome]:
         failed = {b: self.fail_on[b] for b in body_ids if b in self.fail_on}

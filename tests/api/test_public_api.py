@@ -66,7 +66,8 @@ def test_pure_api_names_are_pinned():
         # NX seam
         "PartChangeOutcome",
         "PartMaterialService",
-        # wording and codes
+        # wording, codes and attribute names
+        "MaterialPartAttributes",
         "MaterialsCodes",
         "MaterialsText",
         "__version__",
@@ -100,6 +101,14 @@ def test_service_gestures_are_pinned():
         "confirm_remaining",
     ]
     assert list(inspect.signature(service.clear).parameters) == ["self", "body_ids"]
+    assert list(inspect.signature(service.preferred_material).parameters) == ["self"]
+    assert list(inspect.signature(service.set_preferred_material).parameters) == ["self", "name"]
+
+
+def test_preferred_material_attribute_names_are_pinned():
+    # Downstream tools read the attribute by these exact names.
+    assert api.MaterialPartAttributes.CATEGORY == "Material"
+    assert api.MaterialPartAttributes.PREFERRED_MATERIAL == "Preferred Material"
 
 
 def test_part_material_port_is_pinned():
@@ -112,9 +121,19 @@ def test_part_material_port_is_pinned():
             "set_resolution_libraries",
             "apply_plan",
             "clear_material",
+            "get_preferred_material",
+            "set_preferred_material",
         )
         if hasattr(port, name)
-    ] == ["get_bodies", "get_current_assignments", "set_resolution_libraries", "apply_plan", "clear_material"]
+    ] == [
+        "get_bodies",
+        "get_current_assignments",
+        "set_resolution_libraries",
+        "apply_plan",
+        "clear_material",
+        "get_preferred_material",
+        "set_preferred_material",
+    ]
 
 
 def test_rule_module_port_is_pinned():

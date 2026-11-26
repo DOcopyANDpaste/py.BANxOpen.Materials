@@ -166,6 +166,19 @@ class MaterialsText:
     def side_effect_failed(self, detail: str) -> str:
         return f"the material was assigned, but a follow-up step failed: {detail}"
 
+    # ---- Preferred material ----
+
+    @property
+    def preferred_material_blank(self) -> str:
+        return "The preferred material has no name."
+
+    def preferred_material_write_failed(self, attribute: str, detail: str | None) -> str:
+        return self._with_details(
+            f"The preferred material could not be written to the part attribute '{attribute}'; "
+            "the part keeps its previous value.",
+            detail,
+        )
+
     # ---- Shared ----
 
     def _with_details(self, text: str, detail: str | None) -> str:

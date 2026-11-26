@@ -50,3 +50,13 @@ class PartMaterialService(Protocol):
     def clear_material(self, body_ids: Sequence[BodyId]) -> OperationResult[PartChangeOutcome]:
         """Clears both the physical and the display material. Bypasses the planner: there is no material to plan."""
         ...
+
+    def get_preferred_material(self) -> str | None:
+        """The part's preferred-material attribute (`MaterialPartAttributes`), fresh from the part. None when the
+        attribute is missing or blank."""
+        ...
+
+    def set_preferred_material(self, name: str) -> OperationResult[None]:
+        """Writes `name` to the preferred-material attribute in its own undo mark, creating the attribute in its
+        category when the part does not have it yet."""
+        ...

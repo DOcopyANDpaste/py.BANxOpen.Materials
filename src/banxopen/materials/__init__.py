@@ -10,6 +10,7 @@ NX wiring is in `banxopen.materials.nx`.
 
 from __future__ import annotations
 
+from banxopen.materials.attributes import MaterialPartAttributes
 from banxopen.materials.codes import MaterialsCodes
 from banxopen.materials.core.assignment.part_materials import PartChangeOutcome, PartMaterialService
 from banxopen.materials.core.assignment.pipeline import AssignmentPlanFinalizer, MaterialAssignmentPlanner
@@ -96,6 +97,7 @@ __all__ = [
     "MaterialLibraryReference",
     "MaterialLibraryRepository",
     "MaterialLibraryRulesError",
+    "MaterialPartAttributes",
     "MaterialPropertyValue",
     "MaterialRuleModule",
     "MaterialRuleOrder",

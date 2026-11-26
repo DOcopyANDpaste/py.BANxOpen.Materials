@@ -336,3 +336,61 @@ def test_bodies_and_assignments_are_read_fresh_from_the_part():
 
     assert [b.id.value for b in svc.bodies()] == ["b1", "b2"]
     assert svc.current_assignments()[BodyId("b2")].material_name == "Steel"
+
+
+# ---- Preferred material ----
+
+
+def test_reads_the_preferred_material_trimmed():
+    part = FakePartMaterialService([], preferred="  S235JR ")
+
+    assert service(part).preferred_material() == "S235JR"
+
+
+def test_a_blank_preferred_material_reads_as_none():
+    assert service(FakePartMaterialService([], preferred="   ")).preferred_material() is None
+    assert service(FakePartMaterialService([])).preferred_material() is None
+
+
+def test_writes_the_preferred_material_trimmed():
+    part = FakePartMaterialService([], preferred="S235JR")
+
+    result = service(part).set_preferred_material(" AlMg3 ")
+
+    assert result.ok
+    assert part.preferred_writes == ["AlMg3"]
+
+
+def test_any_material_may_be_preferred_even_one_on_no_body():
+    part = FakePartMaterialService([make_body("B1")])
+
+    assert service(part).set_preferred_material("NotOnAnyBody").ok
+    assert part.preferred == "NotOnAnyBody"
+
+
+def test_writing_the_value_the_part_has_changes_nothing():
+    part = FakePartMaterialService([], preferred="S235JR")
+
+    result = service(part).set_preferred_material("s235jr")
+
+    assert result.ok
+    assert part.preferred_writes == []
+
+
+def test_a_blank_preferred_material_is_refused():
+    part = FakePartMaterialService([])
+
+    result = service(part).set_preferred_material("  ")
+
+    assert not result.ok
+    assert result.error_code == MaterialsCodes.PREFERRED_MATERIAL_BLANK
+    assert part.preferred_writes == []
+
+
+def test_a_failed_preferred_material_write_is_passed_through():
+    part = FakePartMaterialService([], fail_preferred_write="NX said no")
+
+    result = service(part).set_preferred_material("S235JR")
+
+    assert not result.ok
+    assert result.message == "NX said no"

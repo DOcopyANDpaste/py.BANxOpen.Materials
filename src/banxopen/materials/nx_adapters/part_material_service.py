@@ -14,6 +14,7 @@ import NXOpen
 
 from banxopen.foundation import BodyId, BodyInfo, BodyKind, OperationResult
 from banxopen.foundation.nx import BodyResolver, NxDialogText, NxSessionContext, UndoScope, nx_error_detail
+from banxopen.materials.attributes import MaterialPartAttributes
 from banxopen.materials.codes import MaterialsCodes
 from banxopen.materials.core.assignment.part_materials import PartChangeOutcome
 from banxopen.materials.core.assignment.planning import ExecutablePlan, SideEffectInstruction
@@ -200,6 +201,58 @@ class NxPartMaterialService:
         if failed:
             return _failed(MaterialsCodes.PARTIAL_FAILURE, self._text.partial_failure, failed)
         return OperationResult.success(PartChangeOutcome())
+
+    # ---- Preferred material (a part attribute) ----
+
+    def get_preferred_material(self) -> str | None:
+        info = self._preferred_attribute()
+        value = (info.StringValue or "").strip() if info is not None else ""
+        return value or None
+
+    def set_preferred_material(self, name: str) -> OperationResult[None]:
+        title = MaterialPartAttributes.PREFERRED_MATERIAL
+        part = self._context.work_part
+        with UndoScope(self._context.session, "Set Preferred Material") as undo:
+            try:
+                info = self._preferred_attribute()
+                if info is None:
+                    # Not on the part yet: created in its category, as the attribute template would have it.
+                    info = NXOpen.NXObject.AttributeInformation()
+                    info.Type = NXOpen.NXObject.AttributeType.String
+                    info.Category = MaterialPartAttributes.CATEGORY
+                    info.Title = title
+                    info.Array = False
+                    _log.info(
+                        "Part attribute '%s / %s' did not exist; creating it.", MaterialPartAttributes.CATEGORY, title
+                    )
+                # Modifying the attribute as read keeps its own title spelling, category and template link.
+                info.StringValue = name
+                part.SetUserAttribute(info, NXOpen.Update.Option.Later)
+            except NXOpen.NXException as ex:
+                _log.error("Writing part attribute '%s' failed: %s", title, nx_error_detail(ex))
+                return OperationResult.fail(
+                    MaterialsCodes.PREFERRED_MATERIAL_WRITE_FAILED,
+                    self._text.preferred_material_write_failed(title, NxDialogText.DEFAULT.nx_error(ex)),
+                )
+            undo.commit()
+        return OperationResult.success()
+
+    def _preferred_attribute(self) -> NXOpen.NXObject.AttributeInformation | None:
+        """The work part's String attribute titled `PREFERRED_MATERIAL`, case-insensitively. One in the Material
+        category wins over a same-titled one elsewhere. None when there is none or the part cannot be read."""
+        try:
+            attributes = list(self._context.work_part.GetUserAttributes())
+        except NXOpen.NXException as ex:
+            _log.warning("Reading the work part's attributes failed: %s", nx_error_detail(ex))
+            return None
+        candidates = [
+            a
+            for a in attributes
+            if a.Type == NXOpen.NXObject.AttributeType.String
+            and same_text(a.Title, MaterialPartAttributes.PREFERRED_MATERIAL)
+        ]
+        in_category = [a for a in candidates if same_text(a.Category, MaterialPartAttributes.CATEGORY)]
+        return (in_category or candidates or [None])[0]
 
     # ---- Helpers ----
 
