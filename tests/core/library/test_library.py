@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import replace
 from pathlib import Path
@@ -98,9 +100,9 @@ def test_get_or_load_points_each_material_at_its_bitmap_or_the_default(tmp_path:
 
 
 def test_list_available_libraries_returns_one_reference_per_xml_file_keyed_by_file_name(tmp_path: Path):
-    (tmp_path / "metric.xml").write_text(EMPTY_LIBRARY_XML)
-    (tmp_path / "english.xml").write_text(EMPTY_LIBRARY_XML)
-    (tmp_path / "notes.txt").write_text("ignored")
+    (tmp_path / "metric.xml").write_text(EMPTY_LIBRARY_XML, encoding="utf-8")
+    (tmp_path / "english.xml").write_text(EMPTY_LIBRARY_XML, encoding="utf-8")
+    (tmp_path / "notes.txt").write_text("ignored", encoding="utf-8")
 
     libraries = FileSystemMaterialLibraryRepository(tmp_path).list_available_libraries()
 
@@ -108,7 +110,7 @@ def test_list_available_libraries_returns_one_reference_per_xml_file_keyed_by_fi
 
 
 def test_read_library_xml_returns_file_content(tmp_path: Path):
-    (tmp_path / "metric.xml").write_text("<MatML_Doc><Material/></MatML_Doc>")
+    (tmp_path / "metric.xml").write_text("<MatML_Doc><Material/></MatML_Doc>", encoding="utf-8")
 
     xml = FileSystemMaterialLibraryRepository(tmp_path).read_library_xml(MaterialLibraryId("metric"))
 

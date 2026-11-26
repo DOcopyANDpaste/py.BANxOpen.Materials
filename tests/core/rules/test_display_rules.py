@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from banxopen.foundation import BodyId, RuleDecision
 from banxopen.materials import BodyMaterialAssignment, DisplayMaterial, MaterialId, MaterialPropertyValue
 from banxopen.materials.core.rules.display import (

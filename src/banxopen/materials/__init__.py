@@ -8,6 +8,8 @@ Three audiences:
 NX wiring is in `banxopen.materials.nx`.
 """
 
+from __future__ import annotations
+
 from banxopen.materials.codes import MaterialsCodes
 from banxopen.materials.core.assignment.part_materials import PartChangeOutcome, PartMaterialService
 from banxopen.materials.core.assignment.pipeline import AssignmentPlanFinalizer, MaterialAssignmentPlanner

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from banxopen.foundation import BodyId, RuleDecision, RuleOutcome
 from banxopen.materials import (
     AssignmentPlan,

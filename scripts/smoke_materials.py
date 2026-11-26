@@ -1,6 +1,6 @@
 """NX smoke test for BANxOpen Materials. Confirms the [verify] UF call shapes in nx_adapters/uf_disp.py.
 
-Run in NX 2412 with a part open that has bodies (File > Execute > Journal, Alt+F8). Both repos' src folders must be
+Run in NX 2606 with a part open that has bodies (File > Execute > Journal, Alt+F8). Both repos' src folders must be
 importable: this script adds them when run from the repo.
 
 Read-only by default:

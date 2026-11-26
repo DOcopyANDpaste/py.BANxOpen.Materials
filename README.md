@@ -1,6 +1,6 @@
 # BANxOpen.Materials (Python)
 
-Material libraries (MatML), the material rule engine, and material assignment in NX. It is the Python port of the C# `BANxOpen.Materials` (NX 2412, CPython 3.11) and depends on [BANxOpen.Foundation](https://github.com/DOcopyANDpaste/py.BANxOpen.Foundation).
+Material libraries (MatML), the material rule engine, and material assignment in NX. It is the Python port of the C# `BANxOpen.Materials` for NX 2606 (Designcenter), whose embedded Python is CPython 3.12 and depends on [BANxOpen.Foundation](https://github.com/DOcopyANDpaste/py.BANxOpen.Foundation).
 
 ## Public API
 
@@ -39,8 +39,9 @@ Copy `config-samples/material-library-rules.json` beside the library XML files, 
 ## Development
 
 ```powershell
-uv venv --python 3.11
-uv pip install -e ".[dev]"                 # installs ../BANxOpen.Foundation editable
+python -m venv .venv                       # with Python 3.12: the version NX 2606 embeds (the template's .venv works)
+.venv\Scripts\python -m pip install -e ..\BANxOpen.Foundation   # sibling repos first, in dependency order: pip does not read [tool.uv.sources]
+.venv\Scripts\python -m pip install -e ".[dev]"
 New-Item -ItemType Junction -Path .\typings -Target "$env:UGII_BASE_DIR\UGOPEN\pythonStubs"
 
 .venv\Scripts\ruff check . ; .venv\Scripts\pyright ; .venv\Scripts\lint-imports ; .venv\Scripts\python -m pytest --cov

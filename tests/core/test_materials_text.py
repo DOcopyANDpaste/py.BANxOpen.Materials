@@ -1,6 +1,8 @@
 """The describer is the single source of the engine's wording: its defaults are pinned here, and an overriding describer
 handed to a rule, the feature gate or the rule set is what ends up in the outcome."""
 
+from __future__ import annotations
+
 from banxopen.foundation import BodyId
 from banxopen.materials import (
     BodyMaterialAssignment,

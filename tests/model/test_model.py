@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from banxopen.materials import MaterialCategory, MaterialId, MaterialPropertyValue

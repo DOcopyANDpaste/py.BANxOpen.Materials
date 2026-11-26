@@ -1,5 +1,7 @@
 """The per-gesture service: what the Material Assignment presenter used to work out itself."""
 
+from __future__ import annotations
+
 import logging
 
 from banxopen.foundation import BodyId, BodyKind, RuleDecision

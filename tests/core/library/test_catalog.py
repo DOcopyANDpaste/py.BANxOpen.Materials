@@ -1,6 +1,8 @@
 """The libraries a user picks from: each file, plus the `_SheetMetal` view of every file holding sheet metal
 materials."""
 
+from __future__ import annotations
+
 import pytest
 
 from banxopen.materials import (

@@ -1,5 +1,7 @@
 """What a material may be used for: its "allowed for" property, and the rules file setting that names it."""
 
+from __future__ import annotations
+
 import logging
 
 import pytest
